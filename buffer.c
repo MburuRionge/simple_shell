@@ -8,7 +8,7 @@
  *
  * Return: bytes read
  */
-ssize_t input_buffer(info_t *zone, char **buf, size_t *len)
+ssize_t input_buffer(my_info *zone, char **buf, size_t *len)
 {
 	ssize_t rd = 0;
 	size_t size = 0;
@@ -18,7 +18,7 @@ ssize_t input_buffer(info_t *zone, char **buf, size_t *len)
 		free(*buf);
 		*buf = NULL;
 		signal(SIGINT, sigintHandler);
-#if USE_GETLINE
+#if ENABLE_GETLINE
 		rd = getline(buf, &size, stdin);
 #else
 		rd = _getline(zone, buf, &size);
@@ -30,12 +30,12 @@ ssize_t input_buffer(info_t *zone, char **buf, size_t *len)
 				(*buf)[rd - 1] = '\0';
 				rd--;
 			}
-			zone->linecount_flag = 1;
+			zone->count_flag = 1;
 			remove_comments(*buf);
 			history_list(zone, *buf, zone->history_count++);
 			{
 				*len = rd;
-				zone->cmd_buf = buf;
+				zone->cmd_buffer = buf;
 			}
 		}
 	}
@@ -48,7 +48,7 @@ ssize_t input_buffer(info_t *zone, char **buf, size_t *len)
  *
  * Return: bytes read
  */
-ssize_t get_input(info_t *zone)
+ssize_t get_input(my_info *zone)
 {
 	static char *buf;
 	static size_t i, j, len;
@@ -76,7 +76,7 @@ ssize_t get_input(info_t *zone)
 		if (i >= len)
 		{
 			i = len = 0;
-			zone->cmd_buf_type = CMD_NORM;
+			zone->cmd_buffer_type = CMD_NORM;
 		}
 
 		*bp = p;
@@ -94,13 +94,13 @@ ssize_t get_input(info_t *zone)
  * @i: size
  * Return: rd
  */
-ssize_t read_buffer(info_t *zone, char *buf, size_t *i)
+ssize_t read_buffer(my_info *zone, char *buf, size_t *i)
 {
 	ssize_t rd = 0;
 
 	if (*i)
 		return (0);
-	rd = read(zone->readfiledescriptor, buf, READ_BUF_SIZE);
+	rd = read(zone->readfiledescriptor, buf, READ_BUFFER_SIZE);
 	if (rd >= 0)
 		*i = rd;
 	return (rd);
@@ -114,9 +114,9 @@ ssize_t read_buffer(info_t *zone, char *buf, size_t *i)
  *
  * Return: s
  */
-int _getline(info_t *zone, char **ptr, size_t *length)
+int _getline(my_info *zone, char **ptr, size_t *length)
 {
-	static char buf[READ_BUF_SIZE];
+	static char buf[READ_BUFFER_SIZE];
 	static size_t i, len;
 	size_t m;
 	ssize_t r = 0, s = 0;

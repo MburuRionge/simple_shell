@@ -7,20 +7,20 @@
  * Return: allocated string containg history file
  */
 
-char *history_file(info_t *zone)
+char *history_file(my_info *zone)
 {
 	char *buffer, *dir;
 
 	dir = _getenv(zone, "HOME=");
 	if (!dir)
 		return (NULL);
-	buffer = malloc(sizeof(char) * (_strlen(dir) + _strlen(HIST_FILE) + 2));
+	buffer = malloc(sizeof(char) * (_strlen(dir) + _strlen(HISTORY_FILE) + 2));
 	if (!buffer)
 		return (NULL);
 	buffer[0] = 0;
 	_strcpy(buffer, dir);
 	_strcat(buffer, "/");
-	_strcat(buffer, HIST_FILE);
+	_strcat(buffer, HISTORY_FILE);
 	return (buffer);
 }
 
@@ -30,7 +30,7 @@ char *history_file(info_t *zone)
  *
  * Return: 1 on success, else -1
  */
-int write_history(info_t *zone)
+int write_history(my_info *zone)
 {
 	ssize_t fd;
 	char *filename = history_file(zone);
@@ -59,7 +59,7 @@ int write_history(info_t *zone)
  *
  * Return: histcount on success, 0 otherwise
  */
-int read_history(info_t *zone)
+int read_history(my_info *zone)
 {
 	int i, result = 0, linecount = 0;
 	ssize_t fd, rd, filesize = 0;
@@ -110,7 +110,7 @@ int read_history(info_t *zone)
  *
  * Return: Always 0
  */
-int history_list(info_t *zone, char *buf, int linecount)
+int history_list(my_info *zone, char *buf, int linecount)
 {
 	list_t *node = NULL;
 
@@ -128,7 +128,7 @@ int history_list(info_t *zone, char *buf, int linecount)
  * @zone: Structure containing potential arguments. Used to maintain
  * Return: the new history_count
  */
-int rehistory(info_t *zone)
+int rehistory(my_info *zone)
 {
 	list_t *node = zone->history;
 	int i = 0;

@@ -7,7 +7,7 @@
  * Return: exits with a given exit status
  * (0) if info.argv[0] != "exit"
  */
-int my_exit(info_t *zone)
+int my_exit(my_info *zone)
 {
 	int exitcheck;
 
@@ -22,10 +22,10 @@ int my_exit(info_t *zone)
 			_eputchar('\n');
 			return (1);
 		}
-		zone->err_num = err_int(zone->argv[1]);
+		zone->error_num = err_int(zone->argv[1]);
 		return (-2);
 	}
-	zone->err_num = -1;
+	zone->error_num = -1;
 	return (-2);
 }
 
@@ -35,7 +35,7 @@ int my_exit(info_t *zone)
  * constant function prototype.
  *  Return: Always 0
  */
-int my_cd(info_t *zone)
+int my_cd(my_info *zone)
 {
 	char *ph, *dir, buffer[1024];
 	int so;
@@ -83,7 +83,7 @@ int my_cd(info_t *zone)
  * constant function prototype.
  *  Return: Always 0
  */
-int my_help(info_t *zone)
+int my_help(my_info *zone)
 {
 	char **arg_array;
 

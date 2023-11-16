@@ -8,7 +8,7 @@
  *
  * Return: 1 if chain delimeter, 0 otherwise
  */
-int chain_related(info_t *zone, char *buf, size_t *p)
+int chain_related(my_info *zone, char *buf, size_t *p)
 {
 	size_t m = *p;
 
@@ -16,18 +16,18 @@ int chain_related(info_t *zone, char *buf, size_t *p)
 	{
 		buf[m] = 0;
 		m++;
-		zone->cmd_buf_type = CMD_OR;
+		zone->cmd_buffer_type = CMD_OR;
 	}
 	else if (buf[m] == '&' && buf[m + 1] == '&')
 	{
 		buf[m] = 0;
 		m++;
-		zone->cmd_buf_type = CMD_AND;
+		zone->cmd_buffer_type = CMD_AND;
 	}
 	else if (buf[m] == ';')
 	{
 		buf[m] = 0;
-		zone->cmd_buf_type = CMD_CHAIN;
+		zone->cmd_buffer_type = CMD_CHAIN;
 	}
 	else
 		return (0);
@@ -45,11 +45,12 @@ int chain_related(info_t *zone, char *buf, size_t *p)
  *
  * Return: Void
  */
-void chain_check_zone(info_t *zone, char *buf, size_t *p, size_t i, size_t len)
+void chain_check_zone(my_info *zone, char *buf, size_t *p,
+		size_t i, size_t len)
 {
 	size_t m = *p;
 
-	if (zone->cmd_buf_type == CMD_AND)
+	if (zone->cmd_buffer_type == CMD_AND)
 	{
 		if (zone->status)
 		{
@@ -57,7 +58,7 @@ void chain_check_zone(info_t *zone, char *buf, size_t *p, size_t i, size_t len)
 			m = len;
 		}
 	}
-	if (zone->cmd_buf_type == CMD_OR)
+	if (zone->cmd_buffer_type == CMD_OR)
 	{
 		if (!zone->status)
 		{
@@ -75,7 +76,7 @@ void chain_check_zone(info_t *zone, char *buf, size_t *p, size_t i, size_t len)
  *
  * Return: 1 if replaced, 0 otherwise
  */
-int processData(info_t *zone)
+int processData(my_info *zone)
 {
 	int i;
 	list_t *node;
@@ -83,7 +84,7 @@ int processData(info_t *zone)
 
 	for (i = 0; i < 10; i++)
 	{
-		node = node_begin_at(zone->alias, zone->argv[0], '=');
+		node = node_begin_at(zone->aliases, zone->argv[0], '=');
 		if (!node)
 			return (0);
 		free(zone->argv[0]);
@@ -104,7 +105,7 @@ int processData(info_t *zone)
  *
  * Return: 1 if replaced, 0 otherwise
  */
-int replace_vars(info_t *zone)
+int replace_vars(my_info *zone)
 {
 	int i = 0;
 	list_t *node;

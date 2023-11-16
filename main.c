@@ -9,7 +9,7 @@
  */
 int main(int ac, char **av)
 {
-	info_t zone[] = { INFO_INIT };
+	my_info zone[] = { DEFAULT_INFO };
 	int fd = 2;
 
 	asm ("mov %1, %0\n\t"
@@ -23,7 +23,7 @@ int main(int ac, char **av)
 		if (fd == -1)
 		{
 			if (errno == EACCES)
-				exit(126);
+				exit(87);
 			if (errno == ENOENT)
 			{
 				_eputs(av[0]);
@@ -31,7 +31,7 @@ int main(int ac, char **av)
 				_eputs(av[1]);
 				_eputchar('\n');
 				_eputchar(BUF_FLUSH);
-				exit(127);
+				exit(88);
 			}
 			return (EXIT_FAILURE);
 		}

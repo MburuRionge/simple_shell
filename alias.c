@@ -7,7 +7,7 @@
  * constant function prototype.
  *  Return: Always 0
  */
-int my_history(info_t *zone)
+int my_history(my_info *zone)
 {
 	print_list(zone->history);
 	return (0);
@@ -19,7 +19,7 @@ int my_history(info_t *zone)
  * @str: the string alias
  * Return: Always 0 on success, 1 on error
  */
-int unset_alias(info_t *zone, char *str)
+int unset_alias(my_info *zone, char *str)
 {
 	char *m, dh;
 	int ret;
@@ -29,8 +29,8 @@ int unset_alias(info_t *zone, char *str)
 		return (1);
 	dh = *m;
 	*m = 0;
-	ret = delete_node_at_index(&(zone->alias),
-		get_node_index(zone->alias, node_begin_at(zone->alias, str, -1)));
+	ret = delete_node_at_index(&(zone->aliases),
+		get_node_index(zone->aliases, node_begin_at(zone->aliases, str, -1)));
 	*m = dh;
 	return (ret);
 }
@@ -42,7 +42,7 @@ int unset_alias(info_t *zone, char *str)
  *
  * Return: Always 0 on success, 1 on error
  */
-int set_alias(info_t *zone, char *str)
+int set_alias(my_info *zone, char *str)
 {
 	char *p;
 
@@ -53,7 +53,7 @@ int set_alias(info_t *zone, char *str)
 		return (unset_alias(zone, str));
 
 	unset_alias(zone, str);
-	return (add_node_end(&(zone->alias), str, 0) == NULL);
+	return (add_node_end(&(zone->aliases), str, 0) == NULL);
 }
 
 /**
@@ -85,7 +85,7 @@ int print_alias(list_t *node)
  * constant function prototype.
  * Return: Always 0
  */
-int the_alias(info_t *zone)
+int the_alias(my_info *zone)
 {
 	int i = 0;
 	char *pop = NULL;
@@ -93,7 +93,7 @@ int the_alias(info_t *zone)
 
 	if (zone->argc == 1)
 	{
-		node = zone->alias;
+		node = zone->aliases;
 		while (node)
 		{
 			print_alias(node);
@@ -107,7 +107,7 @@ int the_alias(info_t *zone)
 		if (pop)
 			set_alias(zone, zone->argv[i]);
 		else
-			print_alias(node_begin_at(zone->alias, zone->argv[i], '='));
+			print_alias(node_begin_at(zone->aliases, zone->argv[i], '='));
 	}
 
 	return (0);

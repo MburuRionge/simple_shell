@@ -13,8 +13,8 @@
 #include <errno.h>
 
 /* for read/write buffers */
-#define READ_BUF_SIZE 1024
-#define WRITE_BUF_SIZE 1024
+#define READ_BUFFER_SIZE 1024
+#define WRITE_BUFFER_SIZE 1024
 #define BUF_FLUSH -1
 
 /* for command chaining */
@@ -28,11 +28,11 @@
 #define CONVERT_UNSIGNED	2
 
 /* 1 if using system getline() */
-#define USE_GETLINE 0
-#define USE_STRTOK 0
+#define ENABLE_GETLINE 0
+#define ENABLE_STRTOK 0
 
-#define HIST_FILE	".simple_shell_history"
-#define HIST_MAX	4096
+#define HISTORY_FILE	".simple_shell_history"
+#define HISTORY_MAX	5040
 
 extern char **environ;
 
@@ -51,64 +51,64 @@ typedef struct list_node
 } list_t;
 
 /**
- *struct passzone - contains pseudo-arguements to pass into a function,
+ *struct pass_zone - contains pseudo-arguements to pass into a function,
  *allowing uniform prototype for function pointer struct
  *@arg: the string read using getline from user input (arguments)
  *@argv: an array of strings / commands from getline
  *@path: a string path for the current command
  *@argc: the argument count
  *@line_count: the error count
- *@err_num: the error status code for exit function
- *@linecount_flag: if on count this line of input
+ *@error_num: the error status code for exit function
+ *@count_flag: if on count this line of input
  *@file_name: the program filename used in compilation of the program
  *@env: linked list local copy of environ
  *@environ: custom modified copy of environ from linked list env
  *@history: the history node
- *@alias: the alias node
- *@env_changed: on if environ was changed
+ *@aliases: the alias node
+ *@env_change: on if environ was changed
  *@status: the return status of the last exec'd command
- *@cmd_buf: address of pointer to cmd_buf, on if chaining
- *@cmd_buf_type: CMD_type ||, &&, ;
+ *@cmd_buffer: address of pointer to cmd_buf, on if chaining
+ *@cmd_buffer_type: CMD_type ||, &&, ;
  *@readfiledescriptor: the fd from which to read line input
- *@histcount: the history line number count
+ *@history_count: the history line number count
  */
-typedef struct passzone
+typedef struct pass_zone
 {
 	char *arg;
 	char **argv;
 	char *path;
 	int argc;
 	unsigned int line_count;
-	int err_num;
-	int linecount_flag;
+	int error_num;
+	int count_flag;
 	char *file_name;
 	list_t *env;
 	list_t *history;
-	list_t *alias;
+	list_t *aliases;
 	char **environ;
-	int env_changed;
+	int env_change;
 	int status;
 
-	char **cmd_buf;
-	int cmd_buf_type;
+	char **cmd_buffer;
+	int cmd_buffer_type;
 	int readfiledescriptor;
 	int history_count;
-} info_t;
+} my_info;
 
-#define INFO_INIT \
+#define DEFINE_INFO \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, \
 	NULL, NULL, 0, 0, NULL, 0, 0, 0}
 
 /**
- *struct builtin - contains a builtin string and related function
+ *struct built_in - contains a builtin string and related function
  *@type: the builtin command flag
  *@func: the function
  */
-typedef struct builtin
+typedef struct built_in
 {
 	char *type;
-	int (*func)(info_t *);
-} builtin_table;
+	int (*func)(my_info *);
+} built_t;
 
 /* The strings function prototype */
 int _strlen(char *);
@@ -129,35 +129,35 @@ int _eputchar(char);
 int putfd(char c, int fd);
 int put_fd(char *str, int fd);
 /* The builtin function prototypes*/
-int my_exit(info_t *);
-int my_cd(info_t *);
-int my_help(info_t *);
-int my_history(info_t *);
-int the_alias(info_t *);
-char **get_zone_environ(info_t *);
-int unsetenv_in_zone(info_t *, char *);
-int setenv_in_zone(info_t *, char *, char *);
+int my_exit(my_info *);
+int my_cd(my_info *);
+int my_help(my_info *);
+int my_history(my_info *);
+int the_alias(my_info *);
+char **get_zone_environ(my_info *);
+int unsetenv_in_zone(my_info *, char *);
+int setenv_in_zone(my_info *, char *, char *);
 /* The memory and memory reallocation function prototypes*/
 char *_memset(char *, char, unsigned int);
 void free_ptr(char **);
 void *_realloc(void *, unsigned int, unsigned int);
 int bfree(void **);
 /* Functions used with or for performing builtin functions*/
-char *_getenv(info_t *, const char *);
-int env(info_t *);
-int my_setenv(info_t *);
-int my_unsetenv(info_t *);
-int fill_env_list(info_t *);
+char *_getenv(my_info *, const char *);
+int env(my_info *);
+int my_setenv(my_info *);
+int my_unsetenv(my_info *);
+int fill_env_list(my_info *);
 /* Function prototype to readline and get input*/
-ssize_t get_input(info_t *);
-int _getline(info_t *, char **, size_t *);
+ssize_t get_input(my_info *);
+int _getline(my_info *, char **, size_t *);
 void sigintHandler(int);
 /* Function prototypes that handles the shell history*/
-char *history_file(info_t *info);
-int write_history(info_t *info);
-int read_history(info_t *info);
-int history_list(info_t *info, char *buf, int linecount);
-int rehistory(info_t *info);
+char *history_file(my_info *zone);
+int write_history(my_info *zone);
+int read_history(my_info *zone);
+int history_list(my_info *zone, char *buf, int linecount);
+int rehistory(my_info, *zone);
 /* Function prototypes that handles singly linked list*/
 list_t *add_node(list_t **, const char *, int);
 list_t *add_node_end(list_t **, const char *, int);
@@ -172,35 +172,35 @@ list_t *node_begin_at(list_t *, char *, char);
 ssize_t get_node_index(list_t *, list_t *);
 /* Function prototypes that finds builtins and commands*/
 int hsh(info_t *, char **);
-int find_builtin(info_t *);
-void find_cmd(info_t *);
-void fork_cmd(info_t *);
+int find_builtin(my_info *);
+void find_cmd(my_info *);
+void fork_cmd(my_info *);
 /* Function protptypes that prints error*/
 int err_int(char *);
-void print_error(info_t *, char *);
+void print_error(my_info *, char *);
 int print_integer(int, int);
 char *convert_number(long int, int, int);
 void remove_comments(char *);
 /* Function prototypes that replaces, aliases, variables e.t.c*/
-int chain_related(info_t *, char *, size_t *);
-void chain_check_zone(info_t *, char *, size_t *, size_t, size_t);
-int processData(info_t *);
-int replace_vars(info_t *);
+int chain_related(my_info *, char *, size_t *);
+void chain_check_zone(my_info *, char *, size_t *, size_t, size_t);
+int processData(my_info *);
+int replace_vars(my_info *);
 int string_replace(char **, char *);
 /* Function prototype that handles interactivity of the shell*/
-int interactive(info_t *);
+int interactive(my_info *);
 int is_delim(char, char *);
 int is_alpha(int);
 int my_atoi(char *);
 /* Function prototypes that check if input is a command*/
-int is_cmd(info_t *, char *);
+int is_cmd(my_info *, char *);
 char *dup_char(char *, int, int);
-char *find_path(info_t *, char *, char *);
+char *find_path(my_info *, char *, char *);
 /* Function prototype for shell loop*/
 int loophsh(char **);
 /* Function prototypes that handles clear*/
-void clear_zone(info_t *);
-void set_zone(info_t *, char **);
-void free_zone(info_t *, int);
+void clear_zone(my_info *);
+void set_zone(my_info *, char **);
+void free_zone(my_info *, int);
 
 #endif

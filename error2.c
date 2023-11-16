@@ -35,7 +35,7 @@ int err_int(char *string)
  * Return: 0 if no numbers in string, converted number otherwise
  * -1 on error
  */
-void print_error(info_t *zone, char *error_message)
+void print_error(my_info *zone, char *error_message)
 {
 	_eputs(zone->file_name);
 	_eputs(": ");

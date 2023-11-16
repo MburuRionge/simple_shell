@@ -7,7 +7,7 @@
  *
  * Return: 1 if true, 0 otherwise
  */
-int is_cmd(info_t *zone, char *path)
+int is_cmd(my_info *zone, char *path)
 {
 	struct stat st;
 
@@ -24,20 +24,20 @@ int is_cmd(info_t *zone, char *path)
 
 /**
  * dup_char - duplicates characters
- * @pathstr: the PATH string
+ * @pathstring: the PATH string
  * @start: starting index
  * @stop: stopping index
  *
  * Return: pointer to new buffer
  */
-char *dup_char(char *pathstr, int start, int stop)
+char *dup_char(char *pathstring, int start, int stop)
 {
 	static char buffer[1024];
 	int i = 0, g = 0;
 
 	for (g = 0, i = start; i < stop; i++)
-		if (pathstr[i] != ':')
-			buffer[g++] = pathstr[i];
+		if (pathstring[i] != ':')
+			buffer[g++] = pathstring[i];
 	buffer[g] = 0;
 	return (buffer);
 }
@@ -45,16 +45,16 @@ char *dup_char(char *pathstr, int start, int stop)
 /**
  * find_path - finds this cmd in the PATH string
  * @zone: the info struct
- * @pathstr: the PATH string
+ * @pathstring: the PATH string
  * @cmd: the cmd to find
  * Return: full path of cmd if found or NULL
  */
-char *find_path(info_t *zone, char *pathstr, char *cmd)
+char *find_path(my_info *zone, char *pathstring, char *cmd)
 {
 	int i = 0, pl = 0;
 	char *path;
 
-	if (!pathstr)
+	if (!pathstring)
 		return (NULL);
 	if ((_strlen(cmd) > 2) && is_prefix(cmd, "./"))
 	{
@@ -63,9 +63,9 @@ char *find_path(info_t *zone, char *pathstr, char *cmd)
 	}
 	while (1)
 	{
-		if (!pathstr[i] || pathstr[i] == ':')
+		if (!pathstring[i] || pathstring[i] == ':')
 		{
-			path = dup_char(pathstr, pl, i);
+			path = dup_char(pathstring, pl, i);
 			if (!*path)
 				_strcat(path, cmd);
 			else
@@ -75,7 +75,7 @@ char *find_path(info_t *zone, char *pathstr, char *cmd)
 			}
 			if (is_cmd(zone, path))
 				return (path);
-			if (!pathstr[i])
+			if (!pathstring[i])
 				break;
 			pl = i;
 		}

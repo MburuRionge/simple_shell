@@ -7,7 +7,7 @@
  *
  * Return: 0 on success, 1 on error, or error code
  */
-int hsh(info_t *zone, char **av)
+int hsh(my_info *zone, char **av)
 {
 	ssize_t i = 0;
 	int loop = 0;
@@ -36,9 +36,9 @@ int hsh(info_t *zone, char **av)
 		exit(zone->status);
 	if (loop == -2)
 	{
-		if (zone->err_num == -1)
+		if (zone->error_num == -1)
 			exit(zone->status);
-		exit(zone->err_num);
+		exit(zone->error_num);
 	}
 	return (loop);
 }
@@ -46,16 +46,15 @@ int hsh(info_t *zone, char **av)
 /**
  * find_builtin - finds a builtin command
  * @zone: the parameter & return info struct
- *
  * Return: -1 if builtin not found,
  *0 if builtin executed successfully,
  *1 if builtin found but not successful,
  *-2 if builtin signals exit()
  */
-int find_builtin(info_t *zone)
+int find_builtin(my_info *zone)
 {
 	int i, loop = -1;
-	builtin_table builtintbl[] = {
+	built_t builtin[] = {
 		{"exit", my_exit},
 		{"env", env},
 		{"help", my_help},
@@ -67,11 +66,11 @@ int find_builtin(info_t *zone)
 		{NULL, NULL}
 	};
 
-	for (i = 0; builtintbl[i].type; i++)
-		if (_strcmp(zone->argv[0], builtintbl[i].type) == 0)
+	for (i = 0; builtin[i].type; i++)
+		if (_strcmp(zone->argv[0], builtin[i].type) == 0)
 		{
 			zone->line_count++;
-			loop = builtintbl[i].func(zone);
+			loop = builtin[i].func(zone);
 			break;
 		}
 	return (loop);
@@ -83,16 +82,16 @@ int find_builtin(info_t *zone)
  *
  * Return: void
  */
-void find_cmd(info_t *zone)
+void find_cmd(my_info *zone)
 {
 	char *path = NULL;
 	int i, p;
 
 	zone->path = zone->argv[0];
-	if (zone->linecount_flag == 1)
+	if (zone->count_flag == 1)
 	{
 		zone->line_count++;
-		zone->linecount_flag = 0;
+		zone->count_flag = 0;
 	}
 	for (i = 0, p = 0; zone->arg[i]; i++)
 		if (!is_delim(zone->arg[i], " \t\n"))
@@ -125,7 +124,7 @@ void find_cmd(info_t *zone)
  *
  * Return: void
  */
-void fork_cmd(info_t *zone)
+void fork_cmd(my_info *zone)
 {
 	pid_t child;
 
@@ -141,7 +140,7 @@ void fork_cmd(info_t *zone)
 		{
 			free_zone(zone, 1);
 			if (errno == EACCES)
-				exit(126);
+				exit(87);
 			exit(1);
 		}
 	}
@@ -151,7 +150,7 @@ void fork_cmd(info_t *zone)
 		if (WIFEXITED(zone->status))
 		{
 			zone->status = WEXITSTATUS(zone->status);
-			if (zone->status == 126)
+			if (zone->status == 87)
 				print_error(zone, "Permission denied\n");
 		}
 	}

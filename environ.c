@@ -6,12 +6,12 @@
  * constant function prototype.
  * Return: Always 0
  */
-char **get_zone_environ(info_t *zone)
+char **get_zone_environ(my_info *zone)
 {
-	if (!zone->environ || zone->env_changed)
+	if (!zone->environ || zone->env_change)
 	{
 		zone->environ = list_strings(zone->env);
-		zone->env_changed = 0;
+		zone->env_change = 0;
 	}
 
 	return (zone->environ);
@@ -24,7 +24,7 @@ char **get_zone_environ(info_t *zone)
  * Return: 1 on delete, 0 otherwise
  * @var: the string env var property
  */
-int unsetenv_in_zone(info_t *zone, char *var)
+int unsetenv_in_zone(my_info *zone, char *var)
 {
 	list_t *node = zone->env;
 	size_t m = 0;
@@ -38,7 +38,7 @@ int unsetenv_in_zone(info_t *zone, char *var)
 		p = is_prefix(node->str, var);
 		if (p && *p == '=')
 		{
-			zone->env_changed = delete_node_at_index(&(zone->env), m);
+			zone->env_change = delete_node_at_index(&(zone->env), m);
 			m = 0;
 			node = zone->env;
 			continue;
@@ -46,19 +46,19 @@ int unsetenv_in_zone(info_t *zone, char *var)
 		node = node->next;
 		m++;
 	}
-	return (zone->env_changed);
+	return (zone->env_change);
 }
 
 /**
  * setenv_in_zone - Initialize a new environment variable,
- *             or modify an existing one
+ * or modify an existing one
  * @zone: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
+ * constant function prototype.
  * @var: the string env var property
  * @value: the string env var value
  *  Return: Always 0
  */
-int setenv_in_zone(info_t *zone, char *var, char *value)
+int setenv_in_zone(my_info *zone, char *var, char *value)
 {
 	char *buf = NULL;
 	list_t *node;
@@ -81,13 +81,13 @@ int setenv_in_zone(info_t *zone, char *var, char *value)
 		{
 			free(node->str);
 			node->str = buf;
-			zone->env_changed = 1;
+			zone->env_change = 1;
 			return (0);
 		}
 		node = node->next;
 	}
 	add_node_end(&(zone->env), buf, 0);
 	free(buf);
-	zone->env_changed = 1;
+	zone->env_change = 1;
 	return (0);
 }

@@ -6,7 +6,7 @@
  * constant function prototype.
  * Return: Always 0
  */
-int env(info_t *zone)
+int env(my_info *zone)
 {
 	print_str(zone->env);
 	return (0);
@@ -19,7 +19,7 @@ int env(info_t *zone)
  *
  * Return: the value
  */
-char *_getenv(info_t *zone, const char *name)
+char *_getenv(my_info *zone, const char *name)
 {
 	list_t *node = zone->env;
 	char *p;
@@ -41,7 +41,7 @@ char *_getenv(info_t *zone, const char *name)
  * constant function prototype.
  *  Return: Always 0
  */
-int my_setenv(info_t *zone)
+int my_setenv(my_info *zone)
 {
 	if (zone->argc != 3)
 	{
@@ -59,7 +59,7 @@ int my_setenv(info_t *zone)
  * constant function prototype.
  *  Return: Always 0
  */
-int my_unsetenv(info_t *zone)
+int my_unsetenv(my_info *zone)
 {
 	int i;
 
@@ -80,7 +80,7 @@ int my_unsetenv(info_t *zone)
  * constant function prototype.
  * Return: Always 0
  */
-int fill_env_list(info_t *zone)
+int fill_env_list(my_info *zone)
 {
 	list_t *node = NULL;
 	size_t i;

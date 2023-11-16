@@ -4,7 +4,7 @@
  * clear_zone - initializes info_t struct
  * @zone: struct address
  */
-void clear_zone(info_t *zone)
+void clear_zone(my_info *zone)
 {
 	zone->arg = NULL;
 	zone->argv = NULL;
@@ -17,7 +17,7 @@ void clear_zone(info_t *zone)
  * @zone: struct address
  * @av: argument vector
  */
-void set_zone(info_t *zone, char **av)
+void set_zone(my_info *zone, char **av)
 {
 	int i = 0;
 
@@ -49,24 +49,24 @@ void set_zone(info_t *zone, char **av)
  * @zone: struct address
  * @all: true if freeing all fields
  */
-void free_zone(info_t *zone, int all)
+void free_zone(my_info *zone, int all)
 {
 	free_ptr(zone->argv);
 	zone->argv = NULL;
 	zone->path = NULL;
 	if (all)
 	{
-		if (!zone->cmd_buf)
+		if (!zone->cmd_buffer)
 			free(zone->arg);
 		if (zone->env)
 			free_list(&(zone->env));
 		if (zone->history)
 			free_list(&(zone->history));
-		if (zone->alias)
-			free_list(&(zone->alias));
+		if (zone->aliases)
+			free_list(&(zone->aliases));
 		free_ptr(zone->environ);
 			zone->environ = NULL;
-		bfree((void **)zone->cmd_buf);
+		bfree((void **)zone->cmd_buffer);
 		if (zone->readfiledescriptor > 2)
 			close(zone->readfiledescriptor);
 		_putchar(BUF_FLUSH);
