@@ -2,11 +2,11 @@
 
 /**
  * interactive - returns true if shell is interactive mode
- * @zone: struct address
+i * @zone: struct address
  *
  * Return: 1 if interactive mode, 0 otherwise
  */
-int interactive(info_t *zone)
+int interactive(my_info *zone)
 {
 	return (isatty(STDIN_FILENO) && zone->readfiledescriptor <= 2);
 }

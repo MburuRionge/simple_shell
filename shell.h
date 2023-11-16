@@ -95,7 +95,7 @@ typedef struct pass_zone
 	int history_count;
 } my_info;
 
-#define DEFINE_INFO \
+#define DEFAULT_INFO \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, \
 	NULL, NULL, 0, 0, NULL, 0, 0, 0}
 
@@ -157,7 +157,7 @@ char *history_file(my_info *zone);
 int write_history(my_info *zone);
 int read_history(my_info *zone);
 int history_list(my_info *zone, char *buf, int linecount);
-int rehistory(my_info, *zone);
+int rehistory(my_info *zone);
 /* Function prototypes that handles singly linked list*/
 list_t *add_node(list_t **, const char *, int);
 list_t *add_node_end(list_t **, const char *, int);
@@ -171,7 +171,7 @@ size_t print_list(const list_t *);
 list_t *node_begin_at(list_t *, char *, char);
 ssize_t get_node_index(list_t *, list_t *);
 /* Function prototypes that finds builtins and commands*/
-int hsh(info_t *, char **);
+int hsh(my_info *, char **);
 int find_builtin(my_info *);
 void find_cmd(my_info *);
 void fork_cmd(my_info *);

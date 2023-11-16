@@ -96,7 +96,7 @@ int read_history(my_info *zone)
 		history_list(zone, buf + result, linecount++);
 	free(buf);
 	zone->history_count = linecount;
-	while (zone->history_count-- >= HIST_MAX)
+	while (zone->history_count-- >= HISTORY_MAX)
 		delete_node_at_index(&(zone->history), 0);
 	rehistory(zone);
 	return (zone->history_count);
